@@ -27,7 +27,10 @@ Piece.defaults = {
 	  }, genIcon     : function(clr) { return clr ? "&#9817;" : "&#9823;" }
 	   , validMatrix : function(p, matrix, arr) {
 	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
-
+	   		function tp(x,y) { if (x<0||y<0||x>7||y>7)return; if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
+	   		if (matrix[p.y][p.x].clr)
+	   		     { if (!tp.call(this, p.x, p.y-1) && p.y==6) tp.call(this, p.x, p.y-2); }
+	   		else { if (!tp.call(this, p.x, p.y+1) && p.y==1) tp.call(this, p.x, p.y+2); }
 	   		return arr;
 	  } } // Sotilas
 	, "R": { c : "R", mf : function(p1,p2) { // Rook - Torni
@@ -35,13 +38,11 @@ Piece.defaults = {
 	  }, genIcon     : function(clr) { return clr ? "&#9814;" : "&#9820;" }
 	   , validMatrix : function(p, matrix) {
 	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
-
 	   		function tp(x,y) { if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
 	   		for(var x=p.x+1,y=p.y; x < 8; x++)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x-1,y=p.y; x >= 0; x--) if (tp.call(this, x, y)) break;
 	   		for(var y=p.y+1,x=p.x; y < 8; y++)  if (tp.call(this, x, y)) break;
 	   		for(var y=p.y-1,x=p.x; y >= 0; y--) if (tp.call(this, x, y)) break;
-
 	   		return arr;
 	  } } // Torni
 	, "N": { c : "N", mf : function(p1,p2) { // Knight - Ratsu
@@ -49,7 +50,11 @@ Piece.defaults = {
 	  }, genIcon     : function(clr) { return clr ? "&#9816;" : "&#9822;" }
 	   , validMatrix : function(p, matrix) {
 	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
-
+	   		function tp(x,y) { if (x<0||y<0||x>7||y>7)return; if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
+	   		tp.call(this, p.x-2, p.y-1); tp.call(this, p.x-1, p.y-2);
+	   		tp.call(this, p.x+2, p.y-1); tp.call(this, p.x+1, p.y-2);
+	   		tp.call(this, p.x+2, p.y+1); tp.call(this, p.x+1, p.y+2);
+	   		tp.call(this, p.x-2, p.y+1); tp.call(this, p.x-1, p.y+2);
 	   		return arr;
 	  } } // Ratsu
 	, "B": { c : "B", mf : function(p1,p2) { // Bishop - Lähetti
@@ -57,13 +62,11 @@ Piece.defaults = {
 	  }, genIcon     : function(clr) { return clr ? "&#9815;" : "&#9821;" }
 	   , validMatrix : function(p, matrix) {
 	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
-
 	   		function tp(x,y) { if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
 	   		for(var x=p.x+1,y=p.y+1; x < 8 && y < 8; x++,y++)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x+1,y=p.y-1; x < 8 && y >=0; x++,y--)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x-1,y=p.y-1; x >=0 && y >=0; x--,y--)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x-1,y=p.y+1; x >=0 && y < 8; x--,y++)  if (tp.call(this, x, y)) break;
-
 	   		return arr;
 	  } } // Lähetti
 	, "Q": { c : "Q", mf : function(p1,p2) { // Queen - Kuningatar
@@ -71,9 +74,7 @@ Piece.defaults = {
 	  }, genIcon     : function(clr) { return clr ? "&#9813;" : "&#9819;" }
 	   , validMatrix : function(p, matrix) {
 	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
-
 	   		function tp(x,y) { if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
-
 	   		for(var x=p.x+1,y=p.y; x < 8; x++)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x-1,y=p.y; x >= 0; x--) if (tp.call(this, x, y)) break;
 	   		for(var y=p.y+1,x=p.x; y < 8; y++)  if (tp.call(this, x, y)) break;
@@ -82,7 +83,6 @@ Piece.defaults = {
 	   		for(var x=p.x+1,y=p.y-1; x < 8 && y >=0; x++,y--)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x-1,y=p.y-1; x >=0 && y >=0; x--,y--)  if (tp.call(this, x, y)) break;
 	   		for(var x=p.x-1,y=p.y+1; x >=0 && y < 8; x--,y++)  if (tp.call(this, x, y)) break;
-
 	   		return arr;
 	  } } // Kuningatar
 	, "K": { c : "K", mf : function(p1,p2) { // King - Kuningas
@@ -90,10 +90,8 @@ Piece.defaults = {
 	  }, genIcon     : function(clr) { return clr ? "&#9812;" : "&#9818;" }
 	   , validMatrix : function(p, matrix) {
 	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
-
 	   		function tp(x,y) { if (x<0||y<0||x>7||y>7)return; if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
 	   		for(var y = -1; y <= 1; y++) for(var x = -1; x <= 1; x++) tp.call(this, p.x+x, p.y+y);
-
 	   		return arr;
 	  } } // Kuningas
 };

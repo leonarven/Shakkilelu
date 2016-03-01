@@ -142,7 +142,7 @@ Game.prototype.render = function(render_activate) {
 Game.prototype.renderHelpers = function(clear) {
 	if (this.selected == null || !(this.selected_piece instanceof Chess.Piece) || !!clear) {
 		console.log("Clearing helpers", this.selected,this.selected_piece);
-		$(".square",this.e_board).removeClass("helper-move-valid").removeClass("helper-move-valid-1");
+		$(".square",this.e_board).removeClass("helper-move-valid");
 	} else {
 		console.log("Rendering helpers", this.selected,this.selected_piece);
 		var p1_square = new Chess.Square(this.selected.data("square"));
@@ -150,12 +150,7 @@ Game.prototype.renderHelpers = function(clear) {
 		console.log(vmatrix, this.selected_piece, p1_square);
 		for(var y = 0; y < 8; y++) {
 			for(var p,x = 0; x < 8; x++) {
-				if (vmatrix[y][x]) $(".square.board-cell-"+y+"-"+x, this.e_board).addClass("helper-move-valid-1");
-				var p2_square = new Chess.Square(x, y);
-				if (this.selected_piece.move_func(p1_square, p2_square)) {
-					if ($(".square.board-cell-"+y+"-"+x+" .piece-clr-"+(this.selected_piece.clr?"1":"0"), this.e_board).length == 0)
-						$(".square.board-cell-"+y+"-"+x, this.e_board).addClass("helper-move-valid");
-				}
+				if (vmatrix[y][x]) $(".square.board-cell-"+y+"-"+x, this.e_board).addClass("helper-move-valid");
 			}
 		}
 	}
