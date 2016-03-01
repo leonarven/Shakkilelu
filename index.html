@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Shakki</title>
+
+		<link href="/libs/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+		<style type="text/css">
+			.chess-board {
+
+				  -webkit-touch-callout: none; /* iOS Safari */
+				  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+				  -khtml-user-select: none;    /* Konqueror */
+				  -moz-user-select: none;      /* Firefox */
+				  -ms-user-select: none;       /* IE/Edge */
+				  user-select: none;           /* non-prefixed version, currently
+				                                  not supported by any browser */
+				border: 1px solid black;
+			}
+			.chess-board .ts.row-0 { border-top: 1px solid black; }
+			.chess-board .ts.column-0 { border-left: 1px solid black; }
+			.chess-board .ts.row-7 { border-bottom: 1px solid black; }
+			.chess-board .ts.column-7 { border-right: 1px solid black; }
+			.chess-board .ts.column-7 { border-right: 1px solid black; }
+			.chess-board .ts {
+				width            : 32px;
+				height           : 32px;
+				background-color : rgba(255, 206, 158, 1);
+				vertical-align   : center;
+				text-align       : center;
+				font-size        : 1.6em;
+			}
+			.chess-board tr:nth-child(2n) .square:nth-child(2n+1), .chess-board tr:nth-child(2n+1) .square:nth-child(2n)
+				{ background-color: rgba(209, 139, 71, 1); }
+
+			.chess-board .ts .piece {
+				display: block;
+				width: inherit;
+				height: inherit;
+			}
+			.chess-board .header {
+				cursor: default;
+			}
+			.chess-board .header.corner {
+				background-color: rgb(0,0,0) !important;
+				border: 1px solid black;
+			}
+			.chess-board .square {
+				cursor: pointer;
+			}
+			.chess-board .square:hover {
+				background-color: rgb(155, 155, 255) !important;
+			}
+			.chess-board .square.selected {
+				background-color: rgb(255, 155, 155) !important;
+				outline: 3px solid #000;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="game"><table class="board"></table></div>
+		<div id="history"><code></code></div>
+		<h1>Hello, world!</h1>
+
+		<script src="/libs/jquery.min.js"></script>
+		<script src="/libs/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+		<script src="./Chess.js"></script>
+		<script src="./main.js"></script>
+		<script type="text/javascript">
+
+		var game = new Game($("#game"));
+		game.setPlayer(true, null);
+		game.setPlayer(false, new Chess.AI(false));
+
+			$(function(){
+
+				game.init();
+				game.render(true);
+
+				setInterval(function(){
+//					game.render();
+				}, 1000);
+
+				$("#game").on("move", function(e, move){
+					console.log("Move : "+move.toString());
+				});
+
+				$("#game").on("capture", function(e, move){
+					console.log("Piece "+move.t_piece.toString()+" captured by "+move.piece.toString());
+				});
+			});
+		</script>
+	</body>
+</html>
