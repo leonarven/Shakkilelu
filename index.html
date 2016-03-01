@@ -28,10 +28,13 @@
 			.chess-board .ts {
 				width            : 32px;
 				height           : 32px;
-				background-color : rgba(255, 206, 158, 1);
 				vertical-align   : center;
 				text-align       : center;
 				font-size        : 1.6em;
+				background-color : rgba(255, 206, 158, 1);
+			}
+			.chess-board .square {
+				background-color : rgba(255, 206, 158, 1);
 			}
 			.chess-board tr:nth-child(2n) .square:nth-child(2n+1), .chess-board tr:nth-child(2n+1) .square:nth-child(2n)
 				{ background-color: rgba(209, 139, 71, 1); }
@@ -58,12 +61,18 @@
 				background-color: rgb(255, 155, 155) !important;
 				outline: 3px solid #000;
 			}
+
+			.chess-board .square.helper-move-valid {
+				background-color : rgba(255, 206, 158, 0.5) !important;
+			}
+			.chess-board .square.helper-move-valid-1 {
+				background-color : rgb(255, 255, 255) !important;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="game"><table class="board"></table></div>
 		<div id="history"><code></code></div>
-		<h1>Hello, world!</h1>
 
 		<script src="/libs/jquery.min.js"></script>
 		<script src="/libs/bootstrap-3.3.6/js/bootstrap.min.js"></script>
@@ -72,8 +81,8 @@
 		<script type="text/javascript">
 
 		var game = new Game($("#game"));
-		game.setPlayer(true, null);
-		game.setPlayer(false, new Chess.AI(false));
+		game.setPlayer(false, null);
+		game.setPlayer(true, new Chess.AI(false));
 
 			$(function(){
 

@@ -15,31 +15,87 @@ var Piece = function(s, c) {
 	this.char      = v.c;
 	this.move_func = v.mf;
 	this.icon      = v.genIcon(this.clr);
-
+	this.valid_matrix = v.validMatrix;
 
 
 	this.toString = function() { return this.char+(this.clr?'1':'0'); }
 };
 Piece.defaults = {
 	  "P": { c : "P", mf : function(p1,p2) { // Pawn - Sotilas
-	  	console.error("Movement not implemented yet to Pawn");
-	  	return true;
-	  }, genIcon : function(clr) { return clr ? "&#9817;" : "&#9823;" } } // Sotilas
+	  	console.error("Movement not implemented yet to Pawn", arguments);
+		return (p1.x == p2.x) && ((this.clr === true)?((p1.y == 6 && p1.y - p2.y == 2) || (p1.y - p2.y == 1)):((p1.y == 1 && p2.y - p1.y == 2) || (p2.y - p1.y == 1)))
+	  }, genIcon     : function(clr) { return clr ? "&#9817;" : "&#9823;" }
+	   , validMatrix : function(p, matrix, arr) {
+	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
+
+	   		return arr;
+	  } } // Sotilas
 	, "R": { c : "R", mf : function(p1,p2) { // Rook - Torni
 		return (p1.x == p2.x || p1.y == p2.y );
-	  }, genIcon : function(clr) { return clr ? "&#9814;" : "&#9820;" } } // Torni
+	  }, genIcon     : function(clr) { return clr ? "&#9814;" : "&#9820;" }
+	   , validMatrix : function(p, matrix) {
+	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
+
+	   		function tp(x,y) { if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
+	   		for(var x=p.x+1,y=p.y; x < 8; x++)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x-1,y=p.y; x >= 0; x--) if (tp.call(this, x, y)) break;
+	   		for(var y=p.y+1,x=p.x; y < 8; y++)  if (tp.call(this, x, y)) break;
+	   		for(var y=p.y-1,x=p.x; y >= 0; y--) if (tp.call(this, x, y)) break;
+
+	   		return arr;
+	  } } // Torni
 	, "N": { c : "N", mf : function(p1,p2) { // Knight - Ratsu
 		return (Math.abs(p1.x - p2.x) == 1 && Math.abs(p1.y - p2.y) == 2) || (Math.abs(p1.x - p2.x) == 2 && Math.abs(p1.y - p2.y) == 1);
-	  }, genIcon : function(clr) { return clr ? "&#9816;" : "&#9822;" } } // Ratsu
+	  }, genIcon     : function(clr) { return clr ? "&#9816;" : "&#9822;" }
+	   , validMatrix : function(p, matrix) {
+	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
+
+	   		return arr;
+	  } } // Ratsu
 	, "B": { c : "B", mf : function(p1,p2) { // Bishop - Lähetti
 		return (Math.abs((p1.y-p2.y) / (p1.x - p2.x)) == 1);
-	  }, genIcon : function(clr) { return clr ? "&#9815;" : "&#9821;" } } // Lähetti
+	  }, genIcon     : function(clr) { return clr ? "&#9815;" : "&#9821;" }
+	   , validMatrix : function(p, matrix) {
+	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
+
+	   		function tp(x,y) { if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
+	   		for(var x=p.x+1,y=p.y+1; x < 8 && y < 8; x++,y++)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x+1,y=p.y-1; x < 8 && y >=0; x++,y--)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x-1,y=p.y-1; x >=0 && y >=0; x--,y--)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x-1,y=p.y+1; x >=0 && y < 8; x--,y++)  if (tp.call(this, x, y)) break;
+
+	   		return arr;
+	  } } // Lähetti
 	, "Q": { c : "Q", mf : function(p1,p2) { // Queen - Kuningatar
 		return (Math.abs((p1.y-p2.y) / (p1.x - p2.x)) == 1 || p1.x == p2.x || p1.y == p2.y );
-	  }, genIcon : function(clr) { return clr ? "&#9813;" : "&#9819;" } } // Kuningatar
+	  }, genIcon     : function(clr) { return clr ? "&#9813;" : "&#9819;" }
+	   , validMatrix : function(p, matrix) {
+	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
+
+	   		function tp(x,y) { if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
+
+	   		for(var x=p.x+1,y=p.y; x < 8; x++)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x-1,y=p.y; x >= 0; x--) if (tp.call(this, x, y)) break;
+	   		for(var y=p.y+1,x=p.x; y < 8; y++)  if (tp.call(this, x, y)) break;
+	   		for(var y=p.y-1,x=p.x; y >= 0; y--) if (tp.call(this, x, y)) break;
+	   		for(var x=p.x+1,y=p.y+1; x < 8 && y < 8; x++,y++)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x+1,y=p.y-1; x < 8 && y >=0; x++,y--)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x-1,y=p.y-1; x >=0 && y >=0; x--,y--)  if (tp.call(this, x, y)) break;
+	   		for(var x=p.x-1,y=p.y+1; x >=0 && y < 8; x--,y++)  if (tp.call(this, x, y)) break;
+
+	   		return arr;
+	  } } // Kuningatar
 	, "K": { c : "K", mf : function(p1,p2) { // King - Kuningas
 		return ((Math.abs(p1.x - p2.x) <= 1) && (Math.abs(p1.y - p2.y) <= 1));
-	  }, genIcon : function(clr) { return clr ? "&#9812;" : "&#9818;" } } // Kuningas
+	  }, genIcon     : function(clr) { return clr ? "&#9812;" : "&#9818;" }
+	   , validMatrix : function(p, matrix) {
+	   		for(var arr = [], y = 0; y < 8 && arr.push([]); y++) for(var x = 0; x < 8; x++) arr[y].push(false);
+
+	   		function tp(x,y) { if (x<0||y<0||x>7||y>7)return; if (matrix[y][x] instanceof Piece) return (arr[y][x] = (matrix[y][x].clr !== this.clr)) != 1337; else arr[y][x] = true; };
+	   		for(var y = -1; y <= 1; y++) for(var x = -1; x <= 1; x++) tp.call(this, p.x+x, p.y+y);
+
+	   		return arr;
+	  } } // Kuningas
 };
 
 /**
@@ -113,7 +169,7 @@ Chess.prototype.move = function(move) {
 	if (arguments[0] instanceof Chess.Square && arguments[1] instanceof Chess.Square) return this.move(new Chess.Move(arguments[0], arguments[1], this.getPiece(arguments[0]), this.getPiece(arguments[1])));
 	if (!(move instanceof Chess.Move)) throw "Only Move can be move";
 
-	if (move.piece.move_func(move.from, move.to))
+	if (move.piece.move_func(move.from, move.to, move.piece))
 		return this.board.move(move);
 	else throw "Invalid move";
 }

@@ -87,6 +87,7 @@ Game.prototype.initDOM = function() {
 	$(".square", this.e_board).on("click", function() {
 		var e = $(this);
 		var board = e.parent(board);
+		self.renderHelpers(true);
 		if( self.selected == null ) {
 			if (e.children().length == 0) return;
 
@@ -105,6 +106,8 @@ Game.prototype.initDOM = function() {
 					e.addClass("selected");
 					self.selected = e;
 					self.selected_piece = self.chess.getPiece(new Chess.Square(e.data("square")));
+
+					self.renderHelpers();
 					return;
 				}
 
@@ -114,6 +117,7 @@ Game.prototype.initDOM = function() {
 			self.selected_piece = null;
 			self.e_board.removeClass("piece-selected");
 		}
+		self.renderHelpers();
 	});
 	$(".square .piece", this.e_board).on("click", function() {
 		$(this).parent(".square").bind("click");
@@ -134,6 +138,27 @@ Game.prototype.render = function(render_activate) {
 		}
 	} else throw "Chess not initialized";
 
+};
+Game.prototype.renderHelpers = function(clear) {
+	if (this.selected == null || !(this.selected_piece instanceof Chess.Piece) || !!clear) {
+		console.log("Clearing helpers", this.selected,this.selected_piece);
+		$(".square",this.e_board).removeClass("helper-move-valid").removeClass("helper-move-valid-1");
+	} else {
+		console.log("Rendering helpers", this.selected,this.selected_piece);
+		var p1_square = new Chess.Square(this.selected.data("square"));
+		var vmatrix = this.selected_piece.valid_matrix(p1_square, this.chess.board.matrix);
+		console.log(vmatrix, this.selected_piece, p1_square);
+		for(var y = 0; y < 8; y++) {
+			for(var p,x = 0; x < 8; x++) {
+				if (vmatrix[y][x]) $(".square.board-cell-"+y+"-"+x, this.e_board).addClass("helper-move-valid-1");
+				var p2_square = new Chess.Square(x, y);
+				if (this.selected_piece.move_func(p1_square, p2_square)) {
+					if ($(".square.board-cell-"+y+"-"+x+" .piece-clr-"+(this.selected_piece.clr?"1":"0"), this.e_board).length == 0)
+						$(".square.board-cell-"+y+"-"+x, this.e_board).addClass("helper-move-valid");
+				}
+			}
+		}
+	}
 };
 Game.prototype.getHistory = function() {
 	if (!!this.chess) {
